@@ -1627,7 +1627,8 @@ class LibraryList(SizeList):
                    {'name': 'Connections', 'width': '15em', 'autoRefresh': False},
                    {'name': 'Ratio', 'width': '15em', 'fmt': self._format_ratio, 'autoRefresh': False},
                    {'name': 'Time seeding', 'width': '25em', 'fmt': self._format_seedingtime, 'autoRefresh': False},
-                   {'name': 'Anonymous', 'width': '15em', 'autoRefresh': False}]
+                   {'name': 'Anonymous', 'width': '15em', 'autoRefresh': False},
+                   {'name': 'Date added', 'width': '15em', 'autoRefresh': False}]
 
         columns = self.guiutility.SetColumnInfo(LibraryListItem, columns, hide_defaults=[2, 7, 8])
         ColumnsManager.getInstance().setColumns(LibraryListItem, columns)
@@ -1846,6 +1847,8 @@ class LibraryList(SizeList):
                 item.SetToolTipColumn(6, "Connected to %d Seeders and %d Leechers." % (seeds, peers) if ds else '')
 
                 item.RefreshColumn(9, 'Yes' if ds and ds.get_download() and ds.get_download().get_anon_mode() else 'No')
+
+                item.RefreshColumn(10,"add date here") 
 
                 # For updating torrent icons
                 torrent_ds = item.original_data.download_state
