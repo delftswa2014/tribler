@@ -215,6 +215,7 @@ class LibtorrentDownloadImpl(DownloadConfigInterface):
 
         self.cew_scheduled = False
         self.askmoreinfo = False
+	self.date_added = ""
 
     def get_def(self):
         return self.tdef
@@ -242,6 +243,8 @@ class LibtorrentDownloadImpl(DownloadConfigInterface):
                 self.dlruntimeconfig = {}
                 self.dlruntimeconfig['max_desired_upload_rate'] = 0
                 self.dlruntimeconfig['max_desired_download_rate'] = 0
+
+		self.set_date_added()		
 
                 if not isinstance(self.tdef, TorrentDefNoMetainfo):
                     self.set_corrected_infoname()
@@ -615,6 +618,13 @@ class LibtorrentDownloadImpl(DownloadConfigInterface):
         # Allow correctedinfoname to be overwritten for multifile torrents only
         if self.get_corrected_filename() and self.get_corrected_filename() != '' and 'files' in self.tdef.get_metainfo()['info']:
             self.correctedinfoname = self.get_corrected_filename()
+
+    def set_date_added(self):
+	self.date_added = self.tdef.get_creation_date()
+	#print(self.tdef.get_creation_date())
+
+    def get_date_added(self):
+	return self.date_added
 
     @checkHandleAndSynchronize()
     def set_selected_files(self, selected_files=None):

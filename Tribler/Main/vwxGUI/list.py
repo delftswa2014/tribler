@@ -4,6 +4,7 @@ import logging
 from math import log
 import re
 import copy
+import datetime
 
 import wx
 from wx.lib.wordwrap import wordwrap
@@ -1628,7 +1629,7 @@ class LibraryList(SizeList):
                    {'name': 'Ratio', 'width': '15em', 'fmt': self._format_ratio, 'autoRefresh': False},
                    {'name': 'Time seeding', 'width': '25em', 'fmt': self._format_seedingtime, 'autoRefresh': False},
                    {'name': 'Anonymous', 'width': '15em', 'autoRefresh': False},
-                   {'name': 'Date added', 'width': '15em', 'autoRefresh': False}]
+                   {'name': 'Date added', 'width': '15em', 'fmt': self._format_date,'autoRefresh': False}]
 
         columns = self.guiutility.SetColumnInfo(LibraryListItem, columns, hide_defaults=[2, 7, 8])
         ColumnsManager.getInstance().setColumns(LibraryListItem, columns)
@@ -1659,6 +1660,11 @@ class LibraryList(SizeList):
 
     def _format_ratio(self, value):
         return "%.2f" % value
+
+    def _format_date(self,value):
+	if(value==0):
+		return "-"
+	return datetime.datetime.fromtimestamp(int(value)).strftime("%Y-%m-%d")
 
     def _torrent_icon(self, item):
         # Always return icon, toggle icon from RefreshItems
@@ -1848,7 +1854,9 @@ class LibraryList(SizeList):
 
                 item.RefreshColumn(9, 'Yes' if ds and ds.get_download() and ds.get_download().get_anon_mode() else 'No')
 
-                item.RefreshColumn(10,"add date here") 
+                item.RefreshColumn(10, str(ds.get_download().get_date_added()) if ds and ds.get_download() else 0) 
+	#	if(ds and ds.get_download()):
+	#		print(ds.get_download().__dict__)
 
                 # For updating torrent icons
                 torrent_ds = item.original_data.download_state
