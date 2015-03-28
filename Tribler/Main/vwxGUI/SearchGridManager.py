@@ -10,7 +10,6 @@ import wx
 from Tribler.Category.Category import Category
 from Tribler.Core.CacheDB.sqlitecachedb import bin2str, str2bin, forceAndReturnDBThread
 from Tribler.Core.TorrentDef import TorrentDef, TorrentDefNoMetainfo
-from Tribler.Core.Video.VideoPlayer import VideoPlayer
 from Tribler.Core.Video.utils import videoextdefaults
 from Tribler.Core.simpledefs import (NTFY_TORRENTS, NTFY_MYPREFERENCES, NTFY_VOTECAST, NTFY_CHANNELCAST,
                                      NTFY_METADATA, DLSTATUS_METADATA, DLSTATUS_WAITING4HASHCHECK,
@@ -438,7 +437,7 @@ class TorrentManager(object):
                 if not known:
                     # Niels 26-10-2012: override category if name is xxx
                     if remoteItem.category.lower() != u'xxx':
-                        local_category = self.category.calculateCategoryNonDict([], remoteItem.name, '', '')[0]
+                        local_category = self.category.calculateCategoryNonDict([], remoteItem.name, '', '')
                         if local_category == 'xxx':
                             self._logger.debug('TorrentSearchGridManager: %s is xxx', remoteItem.name)
                             remoteItem.category = u'XXX'
@@ -635,7 +634,7 @@ class LibraryManager(object):
         """
         Returns the VideoPlayer instance.
         """
-        return VideoPlayer.getInstance()
+        return self.guiUtility.videoplayer
 
     def download_state_callback(self, dslist):
         """
@@ -1352,14 +1351,14 @@ class ChannelManager(object):
         return self.channelcast_db.getSubscribersCount(channel.id)
 
     def _applyFF(self, hits):
-        enabled_category_keys = [key.lower() for key, _ in self.category.getCategoryNames()] + ['other']
+        enabled_category_keys = [key for key, _ in self.category.getCategoryNames()]
 
         def torrentFilter(torrent):
             okCategory = False
 
             category = torrent.get("category", u"unknown")
 
-            if category.lower() in enabled_category_keys:
+            if category in enabled_category_keys:
                 okCategory = True
 
             if not okCategory:
